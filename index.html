@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Orange Book</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+
+<body>
+
+    <!-- HOME SCREEN -->
+    <section id="homeScreen" class="screen active">
+
+        <header class="header">
+            <h1 class="logo">🍊 The Orange Book</h1>
+        </header>
+
+        <div class="container">
+
+            <label class="label">Serial or Machine ID List</label>
+            <select id="serialDropdown" class="dropdown">
+                <option value="">-- Select --</option>
+            </select>
+
+            <label class="label">Search Serial or Machine ID</label>
+            <div class="searchRow">
+                <input id="homeSearch" class="input shortInput" maxlength="12" autocomplete="off">
+                <button id="searchSerialButton" class="primaryButton smallButton">Search</button>
+            </div>
+
+            <div id="searchSuggestions"></div>
+
+            <div id="searchActions" style="display:none; margin-top:10px;">
+                <button id="startIntervention" class="primaryButton">Start Intervention</button>
+                <button id="goHistory" class="secondaryButton">History</button>
+            </div>
+
+            <button id="openTutorial" class="secondaryButton">Tutorial</button>
+
+            <button id="homeBigButton" class="bigHomeButton">
+                Customer Service<br>Account Control Book 🏡
+            </button>
+
+            <button id="addSerialButton" class="floatingPlus">+</button>
+
+        </div>
+    </section>
+
+    <!-- OVERLAY -->
+    <div id="overlayAddSerial"></div>
+
+    <!-- ADD SERIAL SHEET -->
+    <div id="addSerialSheet">
+        <h2>Add new machine</h2>
+
+        <input id="newSerialInput" type="text" class="input" maxlength="12" placeholder="Enter Serial or Machine ID">
+
+        <p style="color:red; font-size:12px; margin-top:4px;">
+            7 to 12 characters — letters & numbers only
+        </p>
+
+        <button id="confirmAddSerial" class="primaryButton">Add machine</button>
+    </div>
+
+    <!-- INTERVENTION SCREEN -->
+    <section id="interventionScreen" class="screen">
+
+        <header class="header">
+            <button id="homeButtonTop" class="homeIcon">🏠</button>
+            <h1 class="logoSmall">Intervention</h1>
+        </header>
+
+        <div class="container">
+
+            <label class="label">Location details</label>
+            <input id="interLocation" class="input">
+
+            <label class="label">Serial or Machine ID</label>
+            <input id="interSerial" class="input" readonly>
+
+            <p style="color:red; font-size:14px; margin-top:6px;">
+                If this is a CRU, did you verify the Firmware level?
+            </p>
+
+            <label class="label">Date</label>
+            <input id="interDate" type="date" class="input">
+
+            <label class="label">Technician</label>
+            <input id="interTech" class="input">
+
+            <label class="label">Case number</label>
+            <input id="interCase" class="input">
+
+            <label class="label">Description</label>
+            <textarea id="interDesc" class="textarea"></textarea>
+
+            <label class="label">Parts used</label>
+            <textarea id="interParts" class="textarea"></textarea>
+
+            <button id="saveIntervention" class="primaryButton">Save</button>
+
+            <button id="homeButtonBottom" class="bigHomeButton">
+                Customer Service<br>Account Control Book 🏡
+            </button>
+
+        </div>
+    </section>
+
+    <!-- HISTORY SCREEN -->
+    <section id="historyScreen" class="screen">
+
+        <header class="header">
+            <button id="homeButtonTopHistory" class="homeIcon">🏠</button>
+            <h1 class="logoSmall">History</h1>
+        </header>
+
+        <div class="container">
+
+            <label class="label">Search Serial or Machine ID</label>
+            <input id="historySearch" class="input" maxlength="12" autocomplete="off">
+
+            <button id="searchHistory" class="primaryButton">Search</button>
+            <button id="exportPdf" class="secondaryButton">Export PDF</button>
+
+            <div id="historyResults"></div>
+
+            <button id="homeButtonBottomHistory" class="bigHomeButton">
+                Customer Service<br>Account Control Book 🏡
+            </button>
+
+        </div>
+    </section>
+
+    <!-- TUTORIAL SCREEN -->
+    <section id="tutorialScreen" class="screen">
+
+        <header class="header">
+            <button id="homeButtonTutorial" class="homeIcon">🏠</button>
+            <h1 class="logoSmall">Tutorial</h1>
+        </header>
+
+        <div class="container">
+
+            <!-- Your original tutorial text preserved exactly -->
+            <div style="font-size:16px; color:#555; line-height:1.6;">
+
+                <h2>Adding a Serial or Machine ID</h2>
+                <p>
+                    Serial or Machine IDs can be added manually for new machines, or whenever you cannot find the machine in the app. 
+                    If a number already exists, the app will prevent you from creating a duplicate.
+                </p>
+
+                <h2>Character Requirements</h2>
+                <p>
+                    The ID must contain 7 to 12 alphanumeric characters. 
+                    The app already blocks anything outside this range automatically.
+                </p>
+
+                <h2>ATM Machine IDs</h2>
+                <p>For ATMs, use the machine ID provided by the customer. Examples:</p>
+                <ul>
+                    <li>BDCQCxxx</li>
+                    <li>AFxxxxxx</li>
+                </ul>
+
+                <h2>CRU Serial Numbers</h2>
+                <p>For CRUs, use the official 7‑ or 12‑character serial number. Examples:</p>
+                <ul>
+                    <li>Old CM18: 000xxxx</li>
+                    <li>New CM18: R2000Txxxxxx</li>
+                    <li>New CM18: R3000Txxxxxx</li>
+                    <li>New CM18: 18ETxxxxxxxx</li>
+                </ul>
+
+                <h2>Location Details</h2>
+                <p>
+                    For large sites such as NRT some technicians, for personal tracking use the customer's machine ID 
+                    and personal notes for location.
+                </p>
+
+                <p><strong>Example:</strong><br>
+                    GCP01 — second floor, right of the stairs
+                </p>
+
+                <p>
+                    This information is entered in the Location details field when creating a service request. 
+                    It is saved permanently and will always appear in the machine’s history until you update it.
+                </p>
+
+                <h2>Final Notes</h2>
+                <p>
+                    This tool is built for technicians. Use it in the way that best fits your workflow and your site. 
+                    If you have some questions or suggestions, feel free to contact me. 😊🍊
+                </p>
+
+            </div>
+
+            <button id="homeButtonBottomTutorial" class="bigHomeButton">
+                Customer Service<br>Account Control Book 🏡
+            </button>
+        </div>
+
+    </section>
+
+    <!-- 🔥 SECRET ADMIN PANEL (hidden by default) -->
+<div id="importPanel" style="
+    display:none;
+    padding:20px;
+    background:white;
+    border-radius:12px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.15);
+    margin:20px;
+">
+    <h2>Admin — Import CSV</h2>
+
+    <input type="file" id="csvInput" accept=".csv" class="input">
+
+    <button id="importCsvBtn" class="primaryButton" style="margin-top:15px;">
+        Import CSV
+    </button>
+
+    <!-- 🔥 DELETE MACHINE SECTION (added here) -->
+    <hr style="margin:20px 0;">
+
+    <h3>Delete a machine</h3>
+
+    <input id="deleteSerialInput" class="input" placeholder="Enter Serial or Machine ID">
+
+    <button id="deleteSerialBtn" class="secondaryButton" style="margin-top:10px;">
+        Delete machine
+    </button>
+    <!-- 🔥 END DELETE SECTION -->
+
+</div>
+
+<div class="versionTag">Version 2026.1.0 — Ben Savard</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+
